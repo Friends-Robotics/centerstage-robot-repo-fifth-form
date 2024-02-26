@@ -63,8 +63,8 @@ public class RobotHardware {
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
 
     //ARM
-    private DcMotorEx a1ArmMotor = null;
-    private DcMotorEx a2ArmMotor = null;
+    private DcMotor a1ArmMotor = null;
+    private DcMotor a2ArmMotor = null;
     //private Servo claw = null;
     //private Servo leftWrist = null;
     //private Servo rightWrist = null;
@@ -99,18 +99,13 @@ public class RobotHardware {
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         leftDrive  = myOpMode.hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = myOpMode.hardwareMap.get(DcMotor.class, "right_drive");
-        a1ArmMotor = myOpMode.hardwareMap.get(DcMotorEx.class, "a1");
-        a2ArmMotor = myOpMode.hardwareMap.get(DcMotorEx.class, "a2");
+        a1ArmMotor = myOpMode.hardwareMap.get(DcMotor.class, "a1");
+        a2ArmMotor = myOpMode.hardwareMap.get(DcMotor.class, "a2");
         planeLauncher = myOpMode.hardwareMap.get(CRServo.class, "plane_launcher");
 
         a1ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         a2ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        a1ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        a2ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        a1ArmMotor.setTargetPositionTolerance(0);
-        a2ArmMotor.setTargetPositionTolerance(0);
 
         a1ArmMotor.setDirection(DcMotorEx.Direction.FORWARD);
         a2ArmMotor.setDirection(DcMotorEx.Direction.FORWARD);
@@ -155,7 +150,6 @@ public class RobotHardware {
     {
         if(power == 0){
             int holdAtTicks = a2ArmMotor.getCurrentPosition();
-            a2ArmMotor.setPower(0.05);
             a2ArmMotor.setTargetPosition(holdAtTicks);
             a2ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
@@ -164,11 +158,11 @@ public class RobotHardware {
             a2ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
-    public void setA1Power(double power)
+    public void setA1Power(double power,boolean locked)
     {
         if(power == 0){
             int holdAtTicks = a1ArmMotor.getCurrentPosition();
-            a1ArmMotor.setPower(0.05);
+            a1ArmMotor.setPower(1);
             a1ArmMotor.setTargetPosition(holdAtTicks);
             a1ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
