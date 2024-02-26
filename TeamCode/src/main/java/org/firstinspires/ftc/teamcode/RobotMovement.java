@@ -136,9 +136,7 @@ public class RobotMovement extends LinearOpMode {
             else{
                 robot.firePlaneLauncher(0);
             }
-            if(gamepad2.square){
-                locked = !locked;
-            }
+
             //SPEED CONTROLLER
             if(gamepad2.left_bumper){
                 a1ArmSpeed = 0.05;
@@ -153,7 +151,8 @@ public class RobotMovement extends LinearOpMode {
                 a2ArmSpeed = 0.3;
             }
 
-            robot.setA1Power(a1,locked);
+
+            robot.setA1Power(a1);
             robot.setA2Power(a2);
             robot.setClaw(clawOpen);
 

@@ -79,11 +79,7 @@ public class RobotHardware {
     public static final double MID_SERVO =  0.5 ;
     public static final double WRIST_SERVO_SPEED =  0.02 ;  // sets rate to move servo
     public static double ARM_POWER  = 1;
-
-    public static double a1extraPowerNeeded = 0;
-    public static double a1powerApplied = 0;
-    public static double a2extraPowerNeeded = 0;
-    public static double a2powerApplied = 0;
+    public static int holdAtTicks;
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public RobotHardware(LinearOpMode opmode) {
         myOpMode = opmode;
@@ -105,7 +101,6 @@ public class RobotHardware {
 
         a1ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         a2ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
 
         a1ArmMotor.setDirection(DcMotorEx.Direction.FORWARD);
         a2ArmMotor.setDirection(DcMotorEx.Direction.FORWARD);
@@ -158,15 +153,18 @@ public class RobotHardware {
             a2ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
-    public void setA1Power(double power,boolean locked)
+    public void setA1Power(double power)
     {
         if(power == 0){
-            int holdAtTicks = a1ArmMotor.getCurrentPosition();
-            a1ArmMotor.setPower(1);
-            a1ArmMotor.setTargetPosition(holdAtTicks);
+            if(holdAtTicks == -1){
+                holdAtTicks = a1ArmMotor.getCurrentPosition();
+                a1ArmMotor.setTargetPosition(holdAtTicks);
+            }
+            a1ArmMotor.setPower(0.05);
             a1ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         else{
+            holdAtTicks = -1;
             a1ArmMotor.setPower(power);
             a1ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
@@ -180,8 +178,8 @@ public class RobotHardware {
 
     //TODO BIG FAT RISK, DO NOT TRY THIS BEFORE CHECKING SERVO
     public void setClaw(boolean clawState){
-        //claw.setPosition(0.75);
         if(clawState){
+            //claw.setPosition(0.75);
         }
         else{
             //claw.setPosition((0.25));
