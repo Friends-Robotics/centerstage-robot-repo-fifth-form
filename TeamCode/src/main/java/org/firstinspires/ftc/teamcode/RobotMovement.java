@@ -80,6 +80,7 @@ public class RobotMovement extends LinearOpMode {
         boolean clawOpen = false;
         double a1ArmSpeed = 0.2;
         double a2ArmSpeed = 0.3;
+        boolean locked = false;
 
         // initialize all the hardware, using the hardware class. See how clean and simple this is?
         robot.init();
@@ -128,7 +129,6 @@ public class RobotMovement extends LinearOpMode {
                 clawOpen = !clawOpen;
             }
 
-
             //PLANE LAUNCHER
             if(gamepad1.ps && gamepad2.ps){
                 robot.firePlaneLauncher(0.3);
@@ -150,6 +150,7 @@ public class RobotMovement extends LinearOpMode {
             else{
                 a2ArmSpeed = 0.3;
             }
+
 
             robot.setA1Power(a1);
             robot.setA2Power(a2);
