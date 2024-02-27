@@ -128,6 +128,7 @@ public class RobotMovement extends LinearOpMode {
                 clawOpen = !clawOpen;
             }
 
+
             //PLANE LAUNCHER
             if(gamepad1.ps && gamepad2.ps){
                 robot.firePlaneLauncher(0.3);

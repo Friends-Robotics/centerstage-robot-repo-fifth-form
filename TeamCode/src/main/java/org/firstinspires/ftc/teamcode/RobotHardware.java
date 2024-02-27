@@ -63,8 +63,8 @@ public class RobotHardware {
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
 
     //ARM
-    private DcMotorEx a1ArmMotor = null;
-    private DcMotorEx a2ArmMotor = null;
+    private DcMotor a1ArmMotor = null;
+    private DcMotor a2ArmMotor = null;
     //private Servo claw = null;
     //private Servo leftWrist = null;
     //private Servo rightWrist = null;
@@ -79,11 +79,8 @@ public class RobotHardware {
     public static final double MID_SERVO =  0.5 ;
     public static final double WRIST_SERVO_SPEED =  0.02 ;  // sets rate to move servo
     public static double ARM_POWER  = 1;
-
-    public static double a1extraPowerNeeded = 0;
-    public static double a1powerApplied = 0;
-    public static double a2extraPowerNeeded = 0;
-    public static double a2powerApplied = 0;
+    public static int holdAtTicksA1 = -1;
+    public static int holdAtTicksA2 = -1;
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public RobotHardware(LinearOpMode opmode) {
         myOpMode = opmode;
@@ -99,18 +96,12 @@ public class RobotHardware {
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         leftDrive  = myOpMode.hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = myOpMode.hardwareMap.get(DcMotor.class, "right_drive");
-        a1ArmMotor = myOpMode.hardwareMap.get(DcMotorEx.class, "a1");
-        a2ArmMotor = myOpMode.hardwareMap.get(DcMotorEx.class, "a2");
+        a1ArmMotor = myOpMode.hardwareMap.get(DcMotor.class, "a1");
+        a2ArmMotor = myOpMode.hardwareMap.get(DcMotor.class, "a2");
         planeLauncher = myOpMode.hardwareMap.get(CRServo.class, "plane_launcher");
 
         a1ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         a2ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-        a1ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        a2ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        a1ArmMotor.setTargetPositionTolerance(0);
-        a2ArmMotor.setTargetPositionTolerance(0);
 
         a1ArmMotor.setDirection(DcMotorEx.Direction.FORWARD);
         a2ArmMotor.setDirection(DcMotorEx.Direction.FORWARD);
@@ -154,12 +145,15 @@ public class RobotHardware {
     public void setA2Power(double power)
     {
         if(power == 0){
-            int holdAtTicks = a2ArmMotor.getCurrentPosition();
+            if(holdAtTicksA2 == -1){
+                holdAtTicksA2 = a2ArmMotor.getCurrentPosition();
+                a2ArmMotor.setTargetPosition(holdAtTicksA2);
+            }
             a2ArmMotor.setPower(0.05);
-            a2ArmMotor.setTargetPosition(holdAtTicks);
             a2ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         else{
+            holdAtTicksA2 = -1;
             a2ArmMotor.setPower(power);
             a2ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
@@ -167,12 +161,15 @@ public class RobotHardware {
     public void setA1Power(double power)
     {
         if(power == 0){
-            int holdAtTicks = a1ArmMotor.getCurrentPosition();
-            a1ArmMotor.setPower(0.05);
-            a1ArmMotor.setTargetPosition(holdAtTicks);
+            if(holdAtTicksA1 == -1){
+                holdAtTicksA1 = a1ArmMotor.getCurrentPosition();
+                a1ArmMotor.setTargetPosition(holdAtTicksA1);
+            }
+            a1ArmMotor.setPower(0.1);
             a1ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         else{
+            holdAtTicksA1 = -1;
             a1ArmMotor.setPower(power);
             a1ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
@@ -186,8 +183,8 @@ public class RobotHardware {
 
     //TODO BIG FAT RISK, DO NOT TRY THIS BEFORE CHECKING SERVO
     public void setClaw(boolean clawState){
-        //claw.setPosition(0.75);
         if(clawState){
+            //claw.setPosition(0.75);
         }
         else{
             //claw.setPosition((0.25));
