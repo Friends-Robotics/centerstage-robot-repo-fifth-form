@@ -182,8 +182,6 @@ public class RobotHardware {
             a1ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
-
-    //TODO BIG FAT RISK, DO NOT TRY THIS BEFORE CHECKING SERVO
     public void setClaw(boolean clawState){
         if(clawState){
             claw.setPosition(1);
