@@ -34,6 +34,8 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.util.Range;
 
 /*
@@ -73,7 +75,10 @@ public class RobotHardware {
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
     //MISC
-    private CRServo planeLauncher = null;
+    private Servo planeLauncher = null;
+//    private Servo leftWrist = null;
+//    private Servo rightWrist = null;
+    private Servo claw = null;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
     public static final double MID_SERVO =  0.5 ;
@@ -98,7 +103,10 @@ public class RobotHardware {
         rightDrive = myOpMode.hardwareMap.get(DcMotor.class, "right_drive");
         a1ArmMotor = myOpMode.hardwareMap.get(DcMotor.class, "a1");
         a2ArmMotor = myOpMode.hardwareMap.get(DcMotor.class, "a2");
-        planeLauncher = myOpMode.hardwareMap.get(CRServo.class, "plane_launcher");
+        planeLauncher = myOpMode.hardwareMap.get(Servo.class, "plane_launcher");
+        claw = myOpMode.hardwareMap.get(Servo.class, "claw");
+//        rightWrist = myOpMode.hardwareMap.get(Servo.class, "right_wrist");
+//        leftWrist = myOpMode.hardwareMap.get(Servo.class, "left_wrist");
 
         a1ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         a2ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -106,10 +114,12 @@ public class RobotHardware {
         a1ArmMotor.setDirection(DcMotorEx.Direction.FORWARD);
         a2ArmMotor.setDirection(DcMotorEx.Direction.FORWARD);
 
+//        leftWrist.setDirection(Servo.Direction.FORWARD);
+//        rightWrist.setDirection(Servo.Direction.REVERSE);
+
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
-        planeLauncher.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        planeLauncher.setDirection(Servo.Direction.FORWARD);
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.update();
@@ -138,8 +148,8 @@ public class RobotHardware {
         leftDrive.setPower(leftWheel);
         rightDrive.setPower(rightWheel);
     }
-    public void firePlaneLauncher(double planeLauncherStatus){
-        planeLauncher.setPower(planeLauncherStatus);
+    public void firePlaneLauncher(){
+        planeLauncher.setPosition(90);
     }
 
     public void setA2Power(double power)
@@ -149,7 +159,6 @@ public class RobotHardware {
                 holdAtTicksA2 = a2ArmMotor.getCurrentPosition();
                 a2ArmMotor.setTargetPosition(holdAtTicksA2);
             }
-            a2ArmMotor.setPower(0.05);
             a2ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         else{
@@ -165,7 +174,6 @@ public class RobotHardware {
                 holdAtTicksA1 = a1ArmMotor.getCurrentPosition();
                 a1ArmMotor.setTargetPosition(holdAtTicksA1);
             }
-            a1ArmMotor.setPower(0.1);
             a1ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         else{
@@ -174,20 +182,14 @@ public class RobotHardware {
             a1ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
-//
-//    public void setWristPositions(double offset) {
-//        offset = Range.clip(offset, -0.5, 0.5);
-//        leftWrist.setPosition(MID_SERVO + offset);
-//        rightWrist.setPosition(MID_SERVO - offset);
-//    }
 
     //TODO BIG FAT RISK, DO NOT TRY THIS BEFORE CHECKING SERVO
     public void setClaw(boolean clawState){
         if(clawState){
-            //claw.setPosition(0.75);
+            claw.setPosition(1);
         }
-        else{
-            //claw.setPosition((0.25));
+        if(!clawState){
+            claw.setPosition(0);
         }
     }
 }

@@ -78,8 +78,8 @@ public class RobotMovement extends LinearOpMode {
         double a2 = 0;
         double wristOffset = 0;
         boolean clawOpen = false;
-        double a1ArmSpeed = 0.2;
-        double a2ArmSpeed = 0.3;
+        double a1ArmSpeed = 0.15;
+        double a2ArmSpeed = 0.1;
         boolean locked = false;
 
         // initialize all the hardware, using the hardware class. See how clean and simple this is?
@@ -97,11 +97,15 @@ public class RobotMovement extends LinearOpMode {
 
             robot.driveRobot(left, right);
 
-            if (gamepad1.dpad_down)
-                wristOffset += robot.WRIST_SERVO_SPEED;
-            else if (gamepad1.dpad_up)
-                wristOffset -= robot.WRIST_SERVO_SPEED;
-            wristOffset = Range.clip(wristOffset, -0.5, 0.5);
+//            if (gamepad2.dpad_down)
+//                wristOffset = 90;
+//            else if (gamepad2.dpad_up){
+//                wristOffset = -90;
+//            }
+//            else if (gamepad2.dpad_right){
+//                wristOffset = 0;
+//            }
+
 
             //A1 CONTROL
             if (gamepad2.left_stick_y != 0)
@@ -124,31 +128,14 @@ public class RobotMovement extends LinearOpMode {
 
 
             //CLAW CONTROL
-            if(gamepad2.y)
+            if(gamepad2.cross)
             {
                 clawOpen = !clawOpen;
             }
 
             //PLANE LAUNCHER
             if(gamepad1.ps && gamepad2.ps){
-                robot.firePlaneLauncher(0.3);
-            }
-            else{
-                robot.firePlaneLauncher(0);
-            }
-
-            //SPEED CONTROLLER
-            if(gamepad2.left_bumper){
-                a1ArmSpeed = 0.05;
-            }
-            else{
-                a1ArmSpeed = 0.2;
-            }
-            if(gamepad2.right_bumper){
-                a2ArmSpeed = 0.15;
-            }
-            else{
-                a2ArmSpeed = 0.3;
+                robot.firePlaneLauncher();
             }
 
 
