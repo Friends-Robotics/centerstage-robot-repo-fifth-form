@@ -79,7 +79,8 @@ public class RobotHardware {
     public static final double MID_SERVO =  0.5 ;
     public static final double WRIST_SERVO_SPEED =  0.02 ;  // sets rate to move servo
     public static double ARM_POWER  = 1;
-    public static int holdAtTicks;
+    public static int holdAtTicksA1 = -1;
+    public static int holdAtTicksA2 = -1;
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public RobotHardware(LinearOpMode opmode) {
         myOpMode = opmode;
@@ -144,11 +145,15 @@ public class RobotHardware {
     public void setA2Power(double power)
     {
         if(power == 0){
-            int holdAtTicks = a2ArmMotor.getCurrentPosition();
-            a2ArmMotor.setTargetPosition(holdAtTicks);
+            if(holdAtTicksA2 == -1){
+                holdAtTicksA2 = a2ArmMotor.getCurrentPosition();
+                a2ArmMotor.setTargetPosition(holdAtTicksA2);
+            }
+            a2ArmMotor.setPower(0.05);
             a2ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         else{
+            holdAtTicksA2 = -1;
             a2ArmMotor.setPower(power);
             a2ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
@@ -156,15 +161,15 @@ public class RobotHardware {
     public void setA1Power(double power)
     {
         if(power == 0){
-            if(holdAtTicks == -1){
-                holdAtTicks = a1ArmMotor.getCurrentPosition();
-                a1ArmMotor.setTargetPosition(holdAtTicks);
+            if(holdAtTicksA1 == -1){
+                holdAtTicksA1 = a1ArmMotor.getCurrentPosition();
+                a1ArmMotor.setTargetPosition(holdAtTicksA1);
             }
-            a1ArmMotor.setPower(0.05);
+            a1ArmMotor.setPower(0.1);
             a1ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         else{
-            holdAtTicks = -1;
+            holdAtTicksA1 = -1;
             a1ArmMotor.setPower(power);
             a1ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
