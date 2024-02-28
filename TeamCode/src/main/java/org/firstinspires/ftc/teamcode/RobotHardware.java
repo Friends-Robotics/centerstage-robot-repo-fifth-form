@@ -60,32 +60,34 @@ import com.qualcomm.robotcore.util.Range;
 public class RobotHardware {
 
     /* Declare OpMode members. */
-    private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
+    public LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
 
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
 
     //ARM
-    private DcMotor a1ArmMotor = null;
-    private DcMotor a2ArmMotor = null;
+    public DcMotor a1ArmMotor = null;
+    public DcMotor a2ArmMotor = null;
     //private Servo claw = null;
     //private Servo leftWrist = null;
     //private Servo rightWrist = null;
 
     //DRIVE
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
+    public DcMotor leftDrive = null;
+    public DcMotor rightDrive = null;
     //MISC
-    private Servo planeLauncher = null;
+    public Servo planeLauncher = null;
 //    private Servo leftWrist = null;
 //    private Servo rightWrist = null;
-    private Servo claw = null;
+    public Servo claw = null;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
     public static final double MID_SERVO =  0.5 ;
     public static final double WRIST_SERVO_SPEED =  0.02 ;  // sets rate to move servo
     public static double ARM_POWER  = 1;
-    public static int holdAtTicksA1 = -1;
-    public static int holdAtTicksA2 = -1;
+    public static int holdAtTicksA1 = 0;
+    public static int holdAtTicksA2 = 0;
+    public static boolean shouldHoldAtTicksA1 = true;
+    public static boolean shouldHoldAtTicksA2 = true;
     // Define a constructor that allows the OpMode to pass a reference to itself.
     public RobotHardware(LinearOpMode opmode) {
         myOpMode = opmode;
@@ -112,7 +114,7 @@ public class RobotHardware {
         a2ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         a1ArmMotor.setDirection(DcMotorEx.Direction.FORWARD);
-        a2ArmMotor.setDirection(DcMotorEx.Direction.FORWARD);
+        a2ArmMotor.setDirection(DcMotorEx.Direction.REVERSE);
 
 //        leftWrist.setDirection(Servo.Direction.FORWARD);
 //        rightWrist.setDirection(Servo.Direction.REVERSE);
@@ -149,20 +151,23 @@ public class RobotHardware {
         rightDrive.setPower(rightWheel);
     }
     public void firePlaneLauncher(){
-        planeLauncher.setPosition(90);
+        planeLauncher.setPosition(-1);
     }
 
     public void setA2Power(double power)
     {
         if(power == 0){
-            if(holdAtTicksA2 == -1){
+            if(shouldHoldAtTicksA2 == true){
                 holdAtTicksA2 = a2ArmMotor.getCurrentPosition();
-                a2ArmMotor.setTargetPosition(holdAtTicksA2);
+                shouldHoldAtTicksA2 = false;
             }
+            a2ArmMotor.setTargetPosition(holdAtTicksA2);
+            a2ArmMotor.setPower(0.2);
             a2ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            shouldHoldAtTicksA2 = false;
         }
         else{
-            holdAtTicksA2 = -1;
+            shouldHoldAtTicksA2 = true;
             a2ArmMotor.setPower(power);
             a2ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
@@ -170,24 +175,26 @@ public class RobotHardware {
     public void setA1Power(double power)
     {
         if(power == 0){
-            if(holdAtTicksA1 == -1){
+            if(shouldHoldAtTicksA1 == true){
                 holdAtTicksA1 = a1ArmMotor.getCurrentPosition();
-                a1ArmMotor.setTargetPosition(holdAtTicksA1);
+                shouldHoldAtTicksA1 = false;
             }
+            a1ArmMotor.setTargetPosition(holdAtTicksA1);
+            a1ArmMotor.setPower(0.2);
             a1ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         else{
-            holdAtTicksA1 = -1;
+            shouldHoldAtTicksA1 = true;
             a1ArmMotor.setPower(power);
             a1ArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
     public void setClaw(boolean clawState){
         if(clawState){
-            claw.setPosition(1);
+            claw.setPosition(0.5);
         }
-        if(!clawState){
-            claw.setPosition(0);
+        if(clawState == false){
+            claw.setPosition(0.1);
         }
     }
 }

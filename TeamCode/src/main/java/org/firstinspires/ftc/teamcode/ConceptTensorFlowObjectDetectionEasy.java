@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -48,9 +49,10 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection Easy", group = "Concept")
+@Autonomous(name = "Concept: TensorFlow Object Detection Easy", group = "Concept")
 public class ConceptTensorFlowObjectDetectionEasy extends LinearOpMode {
 
+    org.firstinspires.ftc.teamcode.RobotHardware robot = new RobotHardware(this);
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     /**
@@ -77,6 +79,9 @@ public class ConceptTensorFlowObjectDetectionEasy extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
+                robot.setDrivePower(0.7,0.7);
+                sleep(3000);
+                robot.setDrivePower(0,0);
                 telemetryTfod();
 
                 // Push telemetry to the Driver Station.
@@ -90,9 +95,11 @@ public class ConceptTensorFlowObjectDetectionEasy extends LinearOpMode {
                 }
 
                 // Share the CPU.
-                sleep(20);
+                sleep(4000);
             }
         }
+
+
 
         // Save more CPU resources when camera is no longer needed.
         visionPortal.close();
@@ -106,6 +113,7 @@ public class ConceptTensorFlowObjectDetectionEasy extends LinearOpMode {
 
         // Create the TensorFlow processor the easy way.
         tfod = TfodProcessor.easyCreateWithDefaults();
+        tfod.setMinResultConfidence(0.5f);
 
         // Create the vision portal the easy way.
         if (USE_WEBCAM) {
@@ -115,6 +123,7 @@ public class ConceptTensorFlowObjectDetectionEasy extends LinearOpMode {
             visionPortal = VisionPortal.easyCreateWithDefaults(
                 BuiltinCameraDirection.BACK, tfod);
         }
+
 
     }   // end method initTfod()
 
@@ -136,7 +145,7 @@ public class ConceptTensorFlowObjectDetectionEasy extends LinearOpMode {
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
 
-            if(recognition.getLabel() == "can"){
+            if(recognition.getLabel() == "pixel"){
 
             }
         }   // end for() loop

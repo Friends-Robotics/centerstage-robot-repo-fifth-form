@@ -79,8 +79,9 @@ public class RobotMovement extends LinearOpMode {
         double wristOffset = 0;
         boolean clawOpen = false;
         double a1ArmSpeed = 0.15;
-        double a2ArmSpeed = 0.1;
+        double a2ArmSpeed = 0.05;
         boolean locked = false;
+        boolean clawDone = true;
 
         // initialize all the hardware, using the hardware class. See how clean and simple this is?
         robot.init();
@@ -95,7 +96,6 @@ public class RobotMovement extends LinearOpMode {
             left = gamepad1.left_stick_y;
             right  =  -gamepad1.right_stick_y;
 
-            robot.driveRobot(left, right);
 
 //            if (gamepad2.dpad_down)
 //                wristOffset = 90;
@@ -116,11 +116,24 @@ public class RobotMovement extends LinearOpMode {
                 a1 = 0;
             }
 
+            if(gamepad1.left_bumper){
+                left = 1;
+                right = -1;
+            }
+            if(gamepad1.right_bumper){
+                right = 1;
+                left = -1;
+            }
+
+            if(gamepad1.right_trigger > 0){
+                left = left/2;
+                right = right/2;
+            }
 
             //A2 CONTROL
             if (gamepad2.right_stick_y != 0)
             {
-                a2 = -gamepad2.right_stick_y * a2ArmSpeed;
+                a2 = gamepad2.right_stick_y * a2ArmSpeed;
             }
             else{
                 a2 = 0;
@@ -130,7 +143,12 @@ public class RobotMovement extends LinearOpMode {
             //CLAW CONTROL
             if(gamepad2.cross)
             {
-                clawOpen = !clawOpen;
+                clawOpen = true;
+                robot.setClaw(clawOpen);
+            }
+            if(gamepad2.square){
+                clawOpen = false;
+                robot.setClaw(clawOpen);
             }
 
             //PLANE LAUNCHER
@@ -141,7 +159,7 @@ public class RobotMovement extends LinearOpMode {
 
             robot.setA1Power(a1);
             robot.setA2Power(a2);
-            robot.setClaw(clawOpen);
+            robot.driveRobot(left, right);
 
             // Send telemetry messages to explain controls and show robot status
             telemetry.addData("-", "-------");
